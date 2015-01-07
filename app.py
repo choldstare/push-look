@@ -3,6 +3,7 @@ from datetime import datetime,timedelta
 from urllib.request import urlretrieve
 import uuid
 
+#test
 
 def reporthook(blocknum, blocksize, totalsize):
     readsofar = blocknum * blocksize
@@ -34,13 +35,13 @@ def downloadCommitFiles(commit):
 
 def search():
         repos = getRecentRepos("tetris")
-        commits = getRecentCommits(repos[0]) 
+        commits = getRecentCommits(repos[0])
         for commit in commits:
                 downloadCommitFiles(commit)
 
 
 
-if __name__ == "__main__":        
+if __name__ == "__main__":
         ghub = Github()
         search()
 
