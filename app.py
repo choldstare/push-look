@@ -1,9 +1,10 @@
 from github import Github
 from datetime import datetime,timedelta
-from urllib.request import urlretrieve
+from urllib import urlretrieve, urlopen
 import uuid
 
-#test
+
+strings = ["KeyMaterial" , "KeyName" , "KeyFingerprint"]
 
 def reporthook(blocknum, blocksize, totalsize):
     readsofar = blocknum * blocksize
@@ -21,7 +22,7 @@ def getRecentRepos(searchTerm):
         return ghub.search_repositories(searchTerm, "updated", "desc")
 
 def getRecentCommits(repo):
-        d1 = datetime.today() - timedelta(days=1)
+        d1 = datetime.today() - timedelta(days=10) #rate limit??!
         d2 = datetime.today()
         return repo.get_commits(since=d1, until=d2)
 
@@ -33,11 +34,27 @@ def downloadCommitFiles(commit):
                 filename = 'downloads/' + str(uuid.uuid4()) + ".txt"
                 urlretrieve(commitFiles[i].raw_url, filename, reporthook)
 
+def downloadCommitsWithKey(commit):
+    commitFiles = commit.files
+    for i in range(0, len(commitFiles)):
+            print("Reading " + commitFiles[i].raw_url)
+            filename =  'downloads/'+ "awskey" +str(uuid.uuid4())+".txt"
+            commitobject = urlopen(commitFiles[i].raw_url)
+            f = commitobject.read()
+            if any(x in f for x in strings):
+                print "FOUND ONE!?"
+                with open(filename, 'a') as y:
+                    y.write(f)
+
+
+
+
+
 def search():
-        repos = getRecentRepos("tetris")
+        repos = getRecentRepos("aws")
         commits = getRecentCommits(repos[0])
         for commit in commits:
-                downloadCommitFiles(commit)
+                downloadCommitsWithKey(commit)
 
 
 
